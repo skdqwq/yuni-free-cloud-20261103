@@ -1,0 +1,47 @@
+server:
+  port: ${YUNI_PORT:8080}
+  compression:
+    enabled: true
+
+spring:
+  application:
+    name: yuni-backend
+  # 默认 H2 文件库：不用安装任何数据库，数据就在 ./data/yuni.mv.db
+  # 想接 MySQL 就加 --spring.profiles.active=mysql（见 application-mysql.yml）
+  datasource:
+    url: ${YUNI_DB_URL:jdbc:h2:file:./data/yuni;MODE=MySQL;DB_CLOSE_DELAY=-1}
+    username: ${YUNI_DB_USER:sa}
+    password: ${YUNI_DB_PASSWORD:}
+    driver-class-name: org.h2.Driver
+    hikari:
+      maximum-pool-size: 4
+      connection-timeout: 4000
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+  web:
+    resources:
+      static-locations: classpath:/static/
+  mvc:
+    problemdetails:
+      enabled: true
+
+logging:
+  level:
+    root: info
+    com.yuni: info
+    org.hibernate.SQL: warn
+
+# 对话模型：优先走本机 Python 网关，网关不在才直连，都没有就回落剧本，功能不中断
+yuni:
+  llm:
+    base-url: ${YUNI_LLM_BASE:https://api.deepseek.com}
+    api-key: ${YUNI_LLM_KEY:}
+    model: ${YUNI_LLM_MODEL:deepseek-chat}
+    timeout-seconds: 45
+    # Python 模型网关。key 存在它那边，Java 不落盘。留空即完全关闭网关这条路。
+    gateway-url: ${YUNI_GATEWAY_URL:http://127.0.0.1:8071}

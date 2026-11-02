@@ -1,0 +1,14 @@
+# 可选：如果你本机已经有 MySQL，用这个 profile 覆盖默认的 H2
+#   java -jar yuni.jar --spring.profiles.active=mysql
+spring:
+  datasource:
+    url: ${YUNI_DB_URL:jdbc:mysql://localhost:3307/yuni?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false}
+    username: ${YUNI_DB_USER:yuni}
+    password: ${YUNI_DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 6
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect

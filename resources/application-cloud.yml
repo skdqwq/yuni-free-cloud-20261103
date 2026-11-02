@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: ${YUNI_DB_URL}
+    username: ${YUNI_DB_USER}
+    password: ${YUNI_DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 2
+      connection-timeout: 30000
+server:
+  servlet:
+    session:
+      cookie:
+        secure: true
+        http-only: true
+        same-site: lax

@@ -1,0 +1,7 @@
+data/
+classes/
+target/
+.env
+*.log
+yuni.jar
+original-pom.xml

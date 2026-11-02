@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: yuni
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: YUNI_DB_URL
+        sync: false
+      - key: YUNI_DB_USER
+        sync: false
+      - key: YUNI_DB_PASSWORD
+        sync: false
+      - key: SPRING_PROFILES_ACTIVE
+        value: cloud
+      - key: YUNI_GATEWAY_URL
+        value: ""
+      - key: YUNI_LLM_KEY
+        sync: false
+      - key: YUNI_LLM_MODEL
+        value: deepseek-chat
