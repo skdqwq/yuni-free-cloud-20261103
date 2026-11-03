@@ -1,6 +1,5 @@
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),vm=require('node:vm');
-const base=path.resolve(__dirname,'..'),data=path.join(base,'data','planner');
-fs.mkdirSync(data,{recursive:true});
+const base=path.resolve(__dirname,'..');
 const sandbox={module:{exports:{}}};vm.runInNewContext(fs.readFileSync(path.join(base,'web','planner-core.js'),'utf8'),sandbox);
 const {validateHabits}=sandbox.module.exports;
 const companionSandbox={module:{exports:{}}};vm.runInNewContext(fs.readFileSync(path.join(base,'web','companion-core.js'),'utf8'),companionSandbox);
