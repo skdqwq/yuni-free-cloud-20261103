@@ -23,6 +23,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,8 +42,9 @@ public class DataController {
     private final MorningRecordRepository mornings;
     private final UserProfileRepository profiles;
     private final AppUserRepository users;
+    private final JdbcTemplate jdbc;
 
-    public DataController(SessionRepository sessions, MessageRepository messages, RunRepository runs, CardActionRepository actions, MorningRecordRepository mornings, UserProfileRepository profiles, AppUserRepository users) {
+    public DataController(SessionRepository sessions, MessageRepository messages, RunRepository runs, CardActionRepository actions, MorningRecordRepository mornings, UserProfileRepository profiles, AppUserRepository users, JdbcTemplate jdbc) {
         this.sessions = sessions;
         this.messages = messages;
         this.runs = runs;
@@ -50,6 +52,7 @@ public class DataController {
         this.mornings = mornings;
         this.profiles = profiles;
         this.users = users;
+        this.jdbc = jdbc;
     }
 
     @GetMapping(value={"/summary"})
@@ -116,6 +119,8 @@ public class DataController {
         int morningCount = this.mornings.findByUserIdOrderByCreatedAtDesc(u.getId()).size();
         this.mornings.deleteByUserId(u.getId());
         this.profiles.deleteById(u.getId());
+        this.jdbc.update("DELETE FROM yuni_night_cards WHERE user_id=?", u.getId());
+        this.jdbc.update("DELETE FROM yuni_night_preferences WHERE user_id=?", u.getId());
         this.sessions.deleteAll(this.sessions.findByUserId(u.getId()));
         if (withAccount) {
             HttpSession http = req.getSession(false);
