@@ -1,0 +1,24 @@
+/* The login screen occupies the full application, not the sidebar column. */
+body:has(#app > .app > .lg) {
+  overflow-y: auto;
+}
+
+#app > .app:has(> .lg) {
+  display: block;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+#app > .app > .lg {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+#app > .app > .lg > .lg-card {
+  min-width: 0;
+  max-width: 100%;
+}
