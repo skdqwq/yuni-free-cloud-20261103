@@ -1,7 +1,7 @@
 (() => {
   'use strict';
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  let modal, owner, turns = [], started, reminder, recognition, busy = false;
+  let modal, owner, turns = [], started, reminder, recognition, busy = false, returnFocus;
   const titles = {self:'留给自己', tomorrow:'明天照着说', keep:'先放在这里'};
   async function api(path, method='GET', body) {
     const r = await fetch('/api/night' + path, {method, credentials:'same-origin', headers:{'Content-Type':'application/json'}, body:body === undefined ? undefined : JSON.stringify(body)});
@@ -18,7 +18,7 @@
     recognition?.stop(); recognition=null; modal?.remove(); modal=null;
     turns=[]; started=0; clearTimeout(reminder);
     document.body.classList.remove('night-open');
-    document.querySelector('.night-entry')?.focus();
+    (returnFocus?.isConnected ? returnFocus : document.querySelector('.schedule-pause summary') || document.querySelector('.night-entry'))?.focus();
   }
   function status(text) { const el = modal?.querySelector('[data-status]'); if(el) el.textContent=text; }
   function shell(title, content) {
@@ -27,18 +27,40 @@
       modal.addEventListener('click', e=>{if(e.target===modal) close();});
       document.body.append(modal); document.body.classList.add('night-open');
     }
-    modal.innerHTML=`<section class="night-dialog" role="dialog" aria-modal="true" aria-labelledby="night-title"><header><span>屿 YUNI · 睡前空间</span><button type="button" data-close aria-label="关闭睡前空间">×</button></header><h2 id="night-title">${title}</h2><div class="night-content">${content}</div><p class="night-status" role="status" data-status></p></section>`;
+    modal.innerHTML=`<section class="night-dialog" role="dialog" aria-modal="true" aria-labelledby="night-title"><div class="night-lamp" aria-hidden="true"><span class="lamp-shade"></span><span class="lamp-stem"></span><span class="lamp-base"></span></div><header><span>屿 YUNI <i></i> 今晚</span><button type="button" data-close aria-label="关闭睡前空间">×</button></header><h2 id="night-title">${title}</h2><div class="night-content">${content}</div><p class="night-status" role="status" data-status></p></section>`;
     modal.querySelector('[data-close]').onclick=close;
+    modal.querySelector('[data-close]').focus({preventScroll:true});
   }
   function menu() {
-    shell('今晚，先照顾一下自己', `<p class="night-lead">不用把事情讲完整，也不用今晚解决。你可以选一个舒服的方式开始。</p><div class="night-grid"><button data-action="chat"><b>和 NiNi 说说</b><span>说一点，或者只是待一会儿</span></button><button data-action="card"><b>放下一件事</b><span>写成封存卡，明天再看</span></button><button data-action="cards"><b>查看封存卡</b><span>自己决定什么时候打开</span></button><button data-action="prefs"><b>我的陪伴偏好</b><span>少追问、少建议，由你决定</span></button></div><p class="night-note">NiNi 是 AI 伙伴，不提供诊断或治疗；如遇紧急危险，请联系身边可信任的人或当地急救服务。</p>`);
+    shell('今晚，慢一点', `<p class="night-lead">有些话，留在今晚就好。</p><div class="night-grid"><button data-action="chat"><b>和 NiNi 说说</b><span>想到什么，就说什么</span><em>↗</em></button><button data-action="card"><b>先放下一件事</b><span>写下来，明天再看</span><em>↗</em></button><button data-action="cards"><b>我的封存卡</b><span>留给自己的小纸条</span><em>↗</em></button><button data-action="prefs"><b>陪伴偏好</b><span>按你喜欢的方式相处</span><em>↗</em></button></div><p class="night-note">NiNi 是 AI 伙伴，不提供诊断或治疗；如遇紧急危险，请联系身边可信任的人或当地急救服务。</p>`);
+    const islandButton=document.createElement('button'); islandButton.className='island-start'; islandButton.innerHTML='<span>给自己一点安静的时间</span><b>去睡前小岛 <i>↗</i></b>'; modal.querySelector('.night-content').prepend(islandButton); islandButton.onclick=island;
     modal.querySelectorAll('[data-action]').forEach(b=>b.onclick=()=>({chat,card:cardForm,cards:listCards,prefs:preferences})[b.dataset.action]());
   }
-  async function open() { try { await checkOwner(); menu(); } catch(e) { alert(e.message); } }
+  function island(initialMode) {
+    let note='', answer='';
+    function scene(mode){
+      const isEnd=mode==='end';
+      shell('睡前小岛',`${back()}<div class="island-scene ${isEnd?'island-dark':''}"><div class="island-sky" aria-hidden="true"><span>✦</span><span>·</span><span>✧</span></div><div class="island-nini" role="img" aria-label="NiNi 陪在你身边"></div><p class="island-whisper">${isEnd?'晚安。今晚就到这里。':'灯亮着，NiNi 在这里。'}</p>${mode==='write'?'<form class="island-form"><label for="island-note">有话想留在这里吗？</label><textarea id="island-note" maxlength="500" rows="3" placeholder="写一句话，或什么都不说"></textarea><button type="button" data-example>今天有点累</button><button type="submit" class="primary">写成纸条</button></form>':''}${mode==='paper'?`<article class="island-paper"><span>给今晚的一句话</span><p>${esc(note)}</p></article><p class="island-answer">NiNi：${esc(answer)}</p><div class="night-actions"><button type="button" class="primary" data-put>把纸条放下</button><button type="button" data-save>留给明天</button></div><p class="night-note">放下不会保存；选择“留给明天”才会存入账号。</p>`:''}${mode==='quiet'?'<p class="island-quiet">不用说话，就这样坐一会儿。</p>':''}${isEnd?'<button type="button" data-again>再坐一会儿</button>':mode!=='paper'?'<button type="button" data-end>今晚就到这里</button>':''}</div>`);
+      if(mode==='write') modal.querySelector('.island-form').insertAdjacentHTML('beforeend','<small class="island-disclosure">提交后文字会发送给模型服务；只有选择保存才会留在账号中。</small>');
+      modal.querySelector('[data-back]').onclick=menu;
+      modal.querySelector('[data-example]')?.addEventListener('click',()=>{modal.querySelector('#island-note').value='今天有点累';});
+      modal.querySelector('.island-form')?.addEventListener('submit',async e=>{e.preventDefault();note=modal.querySelector('#island-note').value.trim();if(!note){status('写一句话，或者直接安静坐一会儿。');return;}const button=e.target.querySelector('[type=submit]');button.disabled=true;status('NiNi 正在听…');try{const result=await api('/reply','POST',{text:note,turn:1,history:[]});answer=result.reply;scene('paper');}catch{answer='我听到了。今晚先歇一会儿吧。';scene('paper');}});
+      modal.querySelector('[data-put]')?.addEventListener('click',()=>{const paper=modal.querySelector('.island-paper');paper?.classList.add('island-paper-away');setTimeout(()=>{if(modal?.contains(paper))scene('end');},650);});
+      modal.querySelector('[data-save]')?.addEventListener('click',async()=>{try{await api('/cards','POST',{content:note,purpose:'tomorrow'});scene('end');status('纸条已留给明天，可以在封存卡中查看和删除。');}catch(e){status(e.message);}});
+      modal.querySelector('[data-end]')?.addEventListener('click',()=>scene('end'));
+      modal.querySelector('[data-again]')?.addEventListener('click',()=>scene('quiet'));
+    }
+    if(initialMode === 'write' || initialMode === 'quiet'){scene(initialMode);return;}
+    shell('睡前小岛',`${back()}<p class="night-lead">带一句话来，或者什么都不说。</p><div class="island-scene"><div class="island-sky" aria-hidden="true">✦　 ·　 ✧</div><div class="island-nini" role="img" aria-label="NiNi 陪在你身边"></div><p class="island-whisper">灯亮着，NiNi 在这里。</p><div class="night-actions"><button class="primary" data-write>写一张纸条</button><button data-quiet>安静坐一会儿</button></div></div><p class="night-note">自由输入会发送给模型服务；纸条只有在你选择保存时才会写入账号。</p>`);
+    modal.querySelector('[data-back]').onclick=menu;modal.querySelector('[data-write]').onclick=()=>scene('write');modal.querySelector('[data-quiet]').onclick=()=>scene('quiet');
+  }
+  async function open() { returnFocus=document.activeElement;try { await checkOwner(); menu(); } catch(e) { alert(e.message); } }
+  async function openIsland(mode) { returnFocus=document.activeElement;try { await checkOwner(); island(mode); } catch(e) { alert(e.message); } }
+  function mountHome() { window.YuniScheduleHome?.mount(); }
   function back(){ return '<button type="button" class="night-back" data-back>← 返回睡前空间</button>'; }
   function chat() {
     if (!started) { started=Date.now(); reminder=setTimeout(()=>{if(modal?.querySelector('.night-thread')) status('已经聊了一会儿。你可以继续，也可以在这里停下来休息。');},15*60*1000); }
-    shell('和 NiNi 说说',`${back()}<p class="night-note">这是 AI 对话，内容会发送给模型服务；本窗口的对话不会保存，关闭或刷新后无法恢复。</p><div class="night-thread" aria-live="polite"></div><form class="night-chat-form"><label for="night-input">想说的话</label><textarea id="night-input" maxlength="2000" rows="3" placeholder="想到哪里，就说到哪里"></textarea><div class="night-actions"><button type="button" data-voice>语音输入</button><button type="submit" class="primary">发送</button><button type="button" data-finish>今晚先到这里</button></div></form><p class="night-note">语音输入依赖浏览器支持和授权，识别内容会先显示在输入框，由你决定是否发送。</p>`);
+    shell('和 NiNi 说说',`${back()}<p class="night-note">对话会发送给模型服务，关闭或刷新后不会保留。</p><div class="night-thread" aria-live="polite"></div><form class="night-chat-form"><label for="night-input">写给 NiNi</label><textarea id="night-input" maxlength="2000" rows="3" placeholder="今天过得怎么样？"></textarea><div class="night-actions"><button type="button" data-voice>语音输入</button><button type="submit" class="primary">发送</button><button type="button" data-finish>今晚先到这里</button></div></form><p class="night-note">语音识别需要浏览器支持与授权，内容会先显示在输入框，由你决定是否发送。</p>`);
     modal.querySelector('[data-back]').onclick=menu;
     const thread=modal.querySelector('.night-thread');
     const draw=()=>{thread.innerHTML=turns.length?turns.map(t=>`<div class="night-bubble ${t.role==='user'?'mine':''}">${esc(t.text)}</div>`).join(''):'<div class="night-bubble">我在。今晚有什么想放下的，慢慢说就好。</div>';thread.scrollTop=thread.scrollHeight;};draw();
@@ -58,7 +80,7 @@
     };
   }
   function cardForm() {
-    shell('把这件事先放在这里',`${back()}<p class="night-lead">可以是一件事，也可以是一句明天想说的话。只有点击保存后才会写入你的账号。</p><form><label for="night-card">想留下的内容</label><textarea id="night-card" maxlength="500" rows="4" required placeholder="例如：明天我想先说清楚自己的感受"></textarea><fieldset><legend>这句话想怎么用？</legend><label><input type="radio" name="purpose" value="self" checked> 留给自己看</label><label><input type="radio" name="purpose" value="tomorrow"> 明天照着说</label><label><input type="radio" name="purpose" value="keep"> 不发出去，只是放着</label></fieldset><div class="night-actions"><button class="primary" type="submit">保存封存卡</button><button type="button" data-list>查看我的卡片</button></div></form><p class="night-note">保存的内容会同步到你的账号；不会自动发送给别人，也不会自动推送提醒。你可以随时删除。</p>`);
+    shell('先放下一件事',`${back()}<p class="night-lead">把还挂念的事写下来，明天再打开也没关系。</p><form><label for="night-card">留一张小纸条</label><textarea id="night-card" maxlength="500" rows="4" required placeholder="想写什么都可以……"></textarea><fieldset><legend>留给明天</legend><label><input type="radio" name="purpose" value="self" checked> 留给自己看</label><label><input type="radio" name="purpose" value="tomorrow"> 明天照着说</label><label><input type="radio" name="purpose" value="keep"> 不发出去，只是放着</label></fieldset><div class="night-actions"><button class="primary" type="submit">收好这张纸条</button><button type="button" data-list>看看我的卡片</button></div></form><p class="night-note">保存后会同步到你的账号，不会自动发送或推送；你可以随时删除。</p>`);
     modal.querySelector('[data-back]').onclick=menu;modal.querySelector('[data-list]').onclick=listCards;
     modal.querySelector('form').onsubmit=async e=>{e.preventDefault(); const f=new FormData(e.target), button=e.target.querySelector('[type=submit]');button.disabled=true;try{await api('/cards','POST',{content:modal.querySelector('#night-card').value.trim(),purpose:f.get('purpose')});await listCards();status('已经收好，今晚不必急着处理。');}catch(err){status(err.message);}finally{button.disabled=false;}};
   }
@@ -77,6 +99,7 @@
     }catch(err){status(err.message);}
   }
   document.addEventListener('keydown',e=>{if(!modal)return;if(e.key==='Escape'){e.stopImmediatePropagation();close();return;}if(e.key==='Tab'){const items=[...modal.querySelectorAll('button,input,textarea')].filter(el=>!el.disabled);if(!items.length)return;if(e.shiftKey&&document.activeElement===items[0]){e.preventDefault();items.at(-1).focus();}else if(!e.shiftKey&&document.activeElement===items.at(-1)){e.preventDefault();items[0].focus();}}},true);
-  function mount(){const stage=document.querySelector('.stage');if(!stage){if(modal)close();owner=null;turns=[];started=0;clearTimeout(reminder);return;}if(stage.querySelector('.night-entry'))return;const b=document.createElement('button');b.type='button';b.className='night-entry';b.innerHTML='<b>今晚的睡前空间</b><span>说说心情 · 放下一件事</span>';b.onclick=open;const planner=stage.querySelector('.planner-entry');if(planner)planner.before(b);else stage.append(b);}
-  new MutationObserver(mount).observe(document.getElementById('app'),{childList:true,subtree:true});mount();
+  function mount(){const stage=document.querySelector('.stage');if(!stage){if(modal)close();owner=null;turns=[];started=0;clearTimeout(reminder);return;}if(!stage.querySelector('.stage-lamp')){const lamp=document.createElement('div');lamp.className='stage-lamp';lamp.setAttribute('aria-hidden','true');lamp.innerHTML='<span class="lamp-shade"></span><span class="lamp-stem"></span><span class="lamp-base"></span>';stage.prepend(lamp);}if(stage.querySelector('.night-entry'))return;const b=document.createElement('button');b.type='button';b.className='night-entry';b.innerHTML='<b>今晚的睡前空间</b><span>说说心情 · 放下一件事</span>';b.onclick=open;const planner=stage.querySelector('.planner-entry');if(planner)planner.before(b);else stage.append(b);}
+  window.YuniNight = {quiet:()=>openIsland('quiet'), write:()=>openIsland('write'), cards:async()=>{try{await checkOwner();await listCards();}catch(e){alert(e.message);}}, preferences:async()=>{try{await checkOwner();await preferences();}catch(e){alert(e.message);}}};
+  new MutationObserver(()=>{mount();mountHome();}).observe(document.getElementById('app'),{childList:true,subtree:true});mount();mountHome();
 })();

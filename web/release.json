@@ -1,0 +1,28 @@
+{
+  "release": "schedule-20261112-1",
+  "name": "屿YUNI 日程优先版",
+  "date": "2026-11-12",
+  "features": [
+    "直接安排日程",
+    "空闲时段和专注节奏",
+    "试排后确认保存",
+    "任务调整完成撤销",
+    "辅助睡前空间",
+    "手机与登录布局优化"
+  ],
+  "sha256": {
+    "/index.html": "585cf9f7b49f07180b6dfc5249d7e261ae848284f090eeaace21d5eeb45be628",
+    "/schedule-home.js": "8e1129d2b7aaf09699ae9f0e44ad036514f8771a5bc70a0408bac3e4a0acec12",
+    "/schedule-home.css": "94a8256193bb39c06623775ebe417b8697d33b2dab3e21ffedc297b0ed02f772",
+    "/performance-ui.css": "440f7ba7612adfb7319da74c4cdbcc2726ce1b8cff038b29766d7eb4c35aa7eb",
+    "/auth-layout.css": "82ba4db6fb3cf0909ffc25110496906554a0f758bf896748d723935e3e08fa0a",
+    "/planner-core.js": "f9067e1dee9e75109aa0d852bdf56d577b9451578491e6df8b6dc29a66ef07e0",
+    "/nini-planner.js": "ac14f45243ff3e6c05fd8dc5e472d1b079b764fdc61c49dc7d841740d47521ff",
+    "/nini-companion.js": "4e2ff4ff85227deb36cc1cb0e9b50d6e23c68b2e212f33bff04aef03b329580c",
+    "/night-space.js": "10774effd2bc7682defdbbd9ae6e6d54a314028b55ac4c3189a2122b259d88a0",
+    "/night-space.css": "1549f23cdd76d89b082bd101a9ac0b8f090540f9fbb22bccb26002d29a2c2c09",
+    "/assets/index-D3PVelTV.js": "0dd043968b4dc64b86fbe5a216ed3698c99fd9be96efccc2ba717e1f5c6eabb1",
+    "/nini.webp": "7ab5463a2c0d76d130134148f708a276261b734e04238d9994c263ef38dbe7c1",
+    "/nini-card.webp": "96f5c340520b31fc6d182d72511b04fbac0ba77c06d142f2c75ba928afd68bd8"
+  }
+}

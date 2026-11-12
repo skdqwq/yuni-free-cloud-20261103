@@ -1,0 +1,73 @@
+/* One page scroll, readable controls, and a clear schedule-first layout. */
+body.schedule-app{overflow:auto!important;min-height:100svh}
+body.schedule-app:has([role=dialog]){overflow:hidden!important}
+body.schedule-app #app{height:auto;min-height:100svh}
+.app.schedule-ready{height:auto;min-height:100svh;overflow:visible}
+.schedule-ready .nav{position:sticky;top:0;height:72px;backdrop-filter:none;background:#f6f4ee}
+.schedule-ready .content{height:auto;overflow:visible;padding-top:28px;padding-bottom:36px;scroll-padding-top:92px}
+.schedule-main,.schedule-plans,.schedule-pause{scroll-margin-top:92px}
+.schedule-home{font-size:15px;line-height:1.7}
+.schedule-subtitle{font-size:15px!important;color:#52654c!important}
+.schedule-date,.schedule-section-head .section-caption{font-size:12px}
+.schedule-date span{font-size:12px;color:#627159}
+.schedule-workspace{align-items:start}
+.schedule-home .schedule-timeline{max-height:none;overflow:visible}
+.schedule-home :is(.task-title-label,.schedule-form-row>label){font-size:14px;color:#40543a}
+.schedule-home :is(.schedule-note-top,.schedule-sync,.schedule-expand,.habit-inner>p,.habit-quiet,.habit-window label,.habit-rhythm label,.habit-weekdays legend,.schedule-habits summary>b,.schedule-form-bottom>p,.agenda-summary,.agenda-bottom,.timeline-item>span,.timeline-item button,.schedule-plan-row p,.pause-links span,.pause-intro p){font-size:12px!important;color:#586b4d!important}
+.schedule-home :is(.schedule-title-input,input[type=datetime-local]){font-size:16px!important;min-height:48px}
+.schedule-home .schedule-primary{min-height:48px;font-size:15px}
+.schedule-home .duration-presets{gap:8px;flex-wrap:wrap}
+.schedule-home .duration-presets button{min-height:38px;min-width:58px;font-size:13px;padding:6px 12px}
+.schedule-home .schedule-habits summary{min-height:48px;flex-wrap:wrap;gap:7px}
+.schedule-home .schedule-habits summary>b{white-space:normal}
+.schedule-home .schedule-text-button,.schedule-home .plan-row-actions button{min-height:40px;font-size:13px}
+.schedule-home .timeline-item>b,.schedule-home .schedule-plan-row h3{font-size:15px}
+.schedule-home .schedule-timeline time{font-size:13px}
+.schedule-home .schedule-timeline time span{font-size:12px;color:#647655}
+.schedule-home .schedule-pause h2{font-size:16px;color:#40543a}
+.schedule-home .pause-links button{font-size:15px;min-height:58px}
+.schedule-home .schedule-footer p{font-size:12px}
+.schedule-ready .nav-user,.schedule-ready .nav-quit,.schedule-account{font-size:12px!important}
+@media(max-width:790px){
+ .schedule-ready .content{padding-top:22px}
+ .schedule-intro{padding-top:0;padding-bottom:24px}
+ .schedule-intro h1{font-size:clamp(27px,6.6vw,36px);line-height:1.45;letter-spacing:.01em}
+ .schedule-workspace{grid-template-columns:1fr}
+ .schedule-workspace>[data-form-area]{border-right:0;border-bottom:1px solid #e0e5d7}
+ .schedule-agenda{padding:24px}
+ .schedule-home .schedule-form-bottom>p{line-height:1.65}
+}
+@media(max-width:560px){
+ .schedule-ready .nav{height:66px;padding:0 16px;gap:16px}
+ .schedule-nav{gap:14px;min-width:0}
+ .schedule-nav button{font-size:12px;min-height:44px}
+ .schedule-ready .brand{font-size:17px;gap:3px}
+ .schedule-ready .brand b{font-size:13px}
+ .schedule-ready .brand::before{font-size:17px;margin-right:0}
+ .schedule-user-menu summary{width:38px;height:40px}
+ .schedule-ready .nav-user{margin-left:auto;gap:0}
+ .schedule-ready .content{padding:24px 16px 28px}
+ .schedule-date{margin-bottom:14px;font-size:12px}
+ .schedule-subtitle{font-size:13px!important;line-height:1.8}
+ .schedule-desk{flex-basis:100px;max-width:100px;margin-left:-12px}
+ .schedule-section-head{padding:18px}
+ .schedule-section-head>div{gap:8px;flex-wrap:wrap}
+ .schedule-section-head .section-caption{display:none}
+ .schedule-home h2{font-size:17px}
+ .schedule-workspace>[data-form-area]{padding:22px 18px}
+ .schedule-home .schedule-form-bottom{display:flex;align-items:stretch;flex-direction:column;gap:10px}
+ .schedule-home .schedule-form-bottom .schedule-primary{width:100%;justify-content:center}
+ .schedule-home .schedule-form-bottom>p{text-align:center;margin:0}
+ .schedule-home .schedule-form-bottom>p br{display:none}
+ .schedule-agenda{padding:22px 18px}
+ .schedule-home .agenda-heading h3{font-size:16px}
+ .schedule-home .schedule-week button{min-height:64px}
+ .schedule-home .schedule-week button>b{font-size:18px}
+ .schedule-home .schedule-plan-row{flex-wrap:wrap;gap:10px}
+ .schedule-home .plan-row-actions{margin-left:36px;gap:20px}
+ .schedule-home .schedule-plan-row>div:not(.plan-row-actions){flex:1;min-width:0}
+ .schedule-home .schedule-pause summary{flex-wrap:wrap;gap:6px}
+ .schedule-home .schedule-pause summary>span{font-size:12px;white-space:normal}
+}
+@media(max-width:440px){.schedule-form-row{grid-template-columns:1fr;gap:18px}.duration-field{max-width:none}.schedule-home .duration-presets{display:grid;grid-template-columns:repeat(4,1fr)}.schedule-home .duration-presets button{padding:6px;min-width:0}}
+@media(max-width:360px){.schedule-ready .nav{padding:0 12px;gap:10px}.schedule-nav{gap:10px}.schedule-nav button{font-size:11px}.schedule-desk{display:none}.schedule-intro h1{font-size:27px}}

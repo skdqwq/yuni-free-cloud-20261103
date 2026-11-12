@@ -1,10 +1,10 @@
-name: Keep YUNI awake on 2026-11-06
+name: Keep YUNI awake through 2026-11-15
 
 on:
   schedule:
-    # China time 14:00–23:50, then disable the workflow at midnight.
-    - cron: '*/10 6-15 6 11 *'
-    - cron: '0 16 6 11 *'
+    # UTC schedule; the time guard below ends at Monday 00:00 in China.
+    # Offset from the top of the hour to reduce queue contention.
+    - cron: '2-52/10 * 11-15 11 *'
   workflow_dispatch:
 
 permissions:
@@ -14,15 +14,29 @@ permissions:
 jobs:
   wake:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 4
     steps:
-      - name: Wake the app during the requested day or disable this schedule
+      - name: Check the app until this week ends, then disable the schedule
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          if [ "$(date -u +%Y-%m-%dT%H:%M)" \< "2026-11-06T16:00" ] && [ "$(date -u +%Y-%m-%d)" = "2026-11-06" ]; then
-            curl --fail --silent --show-error --max-time 100 https://yuni-free-cloud-20261103.onrender.com/api/health > /dev/null
-          else
+          now=$(date -u +%s)
+          start=$(date -u -d '2026-11-11T16:00:00Z' +%s)
+          finish=$(date -u -d '2026-11-15T16:00:00Z' +%s)
+          if [ "$now" -ge "$finish" ]; then
             gh api --method PUT "repos/$GH_REPO/actions/workflows/yuni-today-wake.yml/disable"
+            echo 'Requested week has ended; workflow disabled.'
+            exit 0
           fi
+          if [ "$now" -lt "$start" ]; then
+            echo 'Requested week has not started.'
+            exit 0
+          fi
+          response=$(mktemp)
+          trap 'rm -f "$response"' EXIT
+          curl --fail --silent --show-error --connect-timeout 10 --max-time 110 \
+            --retry 1 --retry-all-errors --retry-delay 8 \
+            https://yuni-free-cloud-20261103.onrender.com/api/health --output "$response"
+          python3 -c 'import json,sys; assert json.load(open(sys.argv[1])).get("status") == "ok", "Application health is not ok"' "$response"
+          echo 'YUNI health is ok; keepalive window ends 2026-11-15 24:00 Asia/Shanghai.'

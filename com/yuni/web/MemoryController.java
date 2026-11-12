@@ -35,12 +35,12 @@ public class MemoryController {
     public Map<String, Object> get(HttpServletRequest req) {
         String uid = this.uid(req);
         Map<String, Object> profile = this.memory.get(uid);
-        ArrayList fields = new ArrayList();
+        ArrayList<Map<String, Object>> fields = new ArrayList<>();
         this.memory.labels().forEach((key, label) -> {
-            LinkedHashMap<String, String> f = new LinkedHashMap<String, String>();
-            f.put("key", (String)key);
-            f.put("label", (String)label);
-            f.put("value", (String)profile.get(key));
+            LinkedHashMap<String, Object> f = new LinkedHashMap<>();
+            f.put("key", key);
+            f.put("label", label);
+            f.put("value", profile.get(key));
             fields.add(f);
         });
         LinkedHashMap<String, Object> m = new LinkedHashMap<String, Object>();
