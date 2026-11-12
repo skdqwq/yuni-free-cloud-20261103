@@ -1,0 +1,13 @@
+'use strict';
+const assert=require('node:assert/strict');
+const {resolveRuntime,MANAGED_RENDER_SERVICE_ID}=require('./runtime-config.cjs');
+const managed={RENDER:'true',RENDER_SERVICE_ID:MANAGED_RENDER_SERVICE_ID};
+assert.equal(resolveRuntime({}).mode,'application');
+assert.equal(resolveRuntime({RENDER:'true',RENDER_SERVICE_ID:'another-service'}).mode,'application');
+assert.equal(resolveRuntime({RENDER_SERVICE_ID:MANAGED_RENDER_SERVICE_ID}).mode,'application');
+assert.deepEqual(resolveRuntime(managed),{mode:'edge-proxy',proxy:{appOrigin:'https://yuni.pars-study.cn',siteOrigin:'https://yuni.pars-study.cn',sitePrefix:'/showcase'}});
+assert.equal(resolveRuntime({...managed,YUNI_RUNTIME_MODE:'application'}).mode,'application');
+assert.deepEqual(resolveRuntime({...managed,YUNI_PROXY_APP_ORIGIN:'https://app.example.com',YUNI_PROXY_SITE_ORIGIN:'https://site.example.com',YUNI_PROXY_SITE_PATH:''}).proxy,{appOrigin:'https://app.example.com',siteOrigin:'https://site.example.com',sitePrefix:''});
+assert.equal(resolveRuntime({YUNI_RUNTIME_MODE:'edge-proxy',YUNI_PROXY_APP_ORIGIN:'https://app.example.com',YUNI_PROXY_SITE_ORIGIN:'https://site.example.com'}).mode,'edge-proxy');
+assert.throws(()=>resolveRuntime({YUNI_RUNTIME_MODE:'unknown'}),/Unsupported/);
+console.log('runtime selection passed: managed Render routing, independent deployments, explicit rollback and origin overrides');

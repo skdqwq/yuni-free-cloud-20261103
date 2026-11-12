@@ -1,6 +1,6 @@
 # 屿YUNI 日程管理应用
 
-## 晨间暖色、夜间深色与腾讯云转发准备（2026年11月12日）
+## 晨间暖色、夜间深色与腾讯云转发（2026年11月12日）
 
 `app-themes.css` 恢复晨间暖色、其他功能深色，背景使用已压缩的房间照片。日程优先的功能层次保持不变。NiNi 桌宠恢复显示，可拖动、键盘移动和打开互动。官网 NiNi 在可见区域自动准备并播放打招呼，提供暂停与重播；后台或离开视口暂停，减少动态效果或省流模式下需主动播放。待机只移动、旋转整个模型，不缩放身体和翅膀。
 
@@ -15,13 +15,13 @@ YUNI_PROXY_SITE_ORIGIN=https://yuni.pars-study.cn
 YUNI_PROXY_SITE_PATH=/showcase
 ```
 
-Render 原网址根路径进入应用，`/showcase/` 进入官网。HTTPS 上游固定，不接受客户端指定目标；会话 Cookie、Origin、流式响应和 WebSocket 均转发。内部状态与本机模型管理接口仍不开放。默认不设置 `edge-proxy` 时继续运行完整应用，代码发布本身不会切换到代理。转发入口仍受 Render 实例额度与休眠规则影响。
+Render 原网址根路径进入应用，`/showcase/` 进入官网。HTTPS 上游固定，不接受客户端指定目标；会话 Cookie、Origin、流式响应和 WebSocket 均转发。内部状态与本机模型管理接口仍不开放。现有 Render 服务 `srv-dbkinmd9fdbs73bef6f0` 在识别到 Render 平台时自动使用上述腾讯云路由，部署本提交前必须先完成上游发布和公网核验。识别方式采用 Render 官方提供的 `RENDER` 与 `RENDER_SERVICE_ID` 环境变量，见[官方文档](https://render.com/docs/environment-variables)。其他服务、仓库副本和本地运行默认启动完整应用。腾讯云容器明确设置 `YUNI_RUNTIME_MODE=application`；Render 也可设置此值恢复完整应用模式。转发入口仍受 Render 实例额度与休眠规则影响。
 
-验收：`node tools/check-render-edge.cjs`；`node tools/check-voice-mode.cjs`；`node tools/check-schedule-home.cjs`（最后一项只针对本地隔离预览）。
+验收：`node tools/check-runtime-config.cjs`；`node tools/check-render-edge.cjs`；`node tools/check-voice-mode.cjs`；`node tools/check-schedule-home.cjs`（最后一项只针对本地隔离预览）。
 
 ## 官网预览版 2026年11月12日
 
-`web/showcase/index.html` 为优化后的独立官网：日程优先的产品介绍、台灯与 NiNi 首屏、真实规则试排演示、可选陪伴介绍和按需加载的 NiNi 3D 动画。预览地址为 https://yuni-free-cloud-20261103.onrender.com/showcase/index.html 。官网不会读取用户数据或调用 AI，正式应用入口保留在根路径。官网与应用同属现有 Render 服务，未建立反向代理，也未切换腾讯云。
+`web/showcase/index.html` 为优化后的独立官网：日程优先的产品介绍、台灯与 NiNi 首屏、真实规则试排演示、可选陪伴介绍和按需加载的 NiNi 3D 动画。预览地址为 https://yuni-free-cloud-20261103.onrender.com/showcase/index.html 。官网不会读取用户数据或调用 AI，正式应用入口保留在根路径。腾讯云通过独立容器运行官网；Render 的 `/showcase/` 入口通过上述固定 HTTPS 路由访问。
 
 
 ## 云端声音设置修复 2026年11月12日
