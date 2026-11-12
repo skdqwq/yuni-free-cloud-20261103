@@ -22,21 +22,36 @@
   const descriptions={quiet:'去睡前小岛，什么都不说也可以。不用解释，也没有一定要完成的流程。',note:'把还挂念的事写成一张小纸条。由你选择保存，想看的时候再打开。',chat:'想多说一点的时候，再和 NiNi 聊聊。对话是可选的陪伴，也可以随时停下来。'};
   document.querySelectorAll('[data-space]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-space]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));document.getElementById('space-detail').textContent=descriptions[button.dataset.space];}));
 
-  // The model and Three.js are requested only after this explicit interaction.
-  const figure=document.getElementById('nini-greeting'),button=document.getElementById('nini-motion'),status=document.getElementById('nini-status');
-  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
-  let loaded=false,loading=false,finished=false,paused=false,visible=true,player;
-  function sync(){figure.dataset.motion=loaded&&!finished&&!paused&&visible&&!document.hidden?'playing':'paused';button.disabled=loading;button.textContent=loading?'NiNi 正在准备…':!loaded?'和 NiNi 打个招呼 ↗':finished?'再打个招呼 ↗':paused?'继续动作 ↗':'暂停动作';}
-  button.addEventListener('click',async()=>{
-    if(loading)return;
-    if(!loaded){loading=true;sync();status.textContent='第一次准备动作需要稍等片刻。';try{const module=await import('./nini-player.js');player=await module.startGreeting();loaded=true;paused=false;status.textContent='你好呀。慢慢来，我陪你。';}catch{status.textContent='这台设备暂时无法播放立体动作，NiNi 的插图依然陪着你。';}finally{loading=false;sync();}}
-    else if(finished){finished=false;paused=false;player.replay();sync();}
-    else{paused=!paused;sync();}
-  });
-  window.addEventListener('nini:greeting-finished',()=>{finished=true;status.textContent='你好呀。慢慢来，我陪你。';sync();});
-  window.addEventListener('nini:greeting-lost',()=>{loaded=false;finished=false;sync();status.textContent='动作已暂停，仍可查看 NiNi 插图。';});
-  document.addEventListener('visibilitychange',sync);
-  reduced.addEventListener('change',()=>{if(reduced.matches)paused=true;sync();});
-  if('IntersectionObserver'in window)new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;sync();},{threshold:.1}).observe(figure);
-  sync();
+  // Show the illustration immediately, then greet once when each figure enters view.
+  // Only visible figures animate; no loop deforms the model or its wings.
+  function animateFigure(figureId,buttonId,statusId){
+    const figure=document.getElementById(figureId),button=document.getElementById(buttonId),status=document.getElementById(statusId),replay=document.querySelector(`[data-nini-replay="${figureId}"]`);
+    if(!figure||!button)return;
+    const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+    let loaded=false,loading=false,paused=false,visible=false,manual=false,attempted=false,player,scheduled;
+    function sync(){
+      const playing=!paused&&visible&&!document.hidden&&(!reduced.matches||manual);
+      figure.dataset.motion=playing?'playing':'paused';
+      button.disabled=loading;
+      button.textContent=loading?'NiNi 正在准备…':!loaded?'播放打招呼 ↗':paused?'继续动作':'暂停动作';
+      button.setAttribute('aria-pressed',String(loaded&&!paused));
+      if(replay)replay.hidden=!loaded;
+    }
+    async function load(){
+      if(loaded||loading)return;attempted=true;loading=true;sync();
+      try{const module=await import('./nini-player.js?v=showcase-20261112-2');player=await module.startGreeting({figureId,idleMotion:true});loaded=true;if(status)status.textContent='你好呀。慢慢来，我陪你。';}
+      catch{if(status)status.textContent='NiNi 在这里，陪你慢慢来。';}
+      finally{loading=false;sync();}
+    }
+    button.addEventListener('click',async()=>{if(loading)return;if(!loaded){manual=true;paused=false;await load();}else{paused=!paused;if(!paused)manual=true;sync();}});
+    replay?.addEventListener('click',()=>{if(!player)return;manual=true;paused=false;player.replay();sync();});
+    document.addEventListener('visibilitychange',sync);
+    reduced.addEventListener('change',()=>{manual=false;if(reduced.matches)paused=true;sync();});
+    window.addEventListener('nini:greeting-lost',event=>{if(event.detail?.figureId!==figureId)return;loaded=false;sync();});
+    function observe(on){visible=on;clearTimeout(scheduled);sync();if(on&&!attempted&&!reduced.matches&&!navigator.connection?.saveData)scheduled=setTimeout(load,400);}
+    if('IntersectionObserver'in window)new IntersectionObserver(([entry])=>observe(entry.isIntersecting),{threshold:.15}).observe(figure);else observe(true);
+    sync();
+  }
+  animateFigure('nini-hero','hero-nini-motion','hero-nini-status');
+  animateFigure('nini-greeting','nini-motion','nini-status');
 })();

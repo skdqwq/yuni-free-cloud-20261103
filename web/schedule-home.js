@@ -16,7 +16,7 @@
   let activeSection='arrange';
   const defaults=()=>({windows:[{start:'18:00',end:'22:00'}],weekdays:[1,2,3,4,5,6,0],focus:25,rest:5,lead:10,quietOutside:true});
 
-  function route(label) { [...document.querySelectorAll('.segmented button')].find(b=>b.textContent.trim()===label)?.click(); }
+  function route(label) { [...document.querySelectorAll('.segmented button')].find(b=>b.textContent.trim()===label)?.click();requestAnimationFrame(()=>window.scrollTo({top:0,behavior:'instant'})); }
   function jumpTo(section) {
     activeSection=section;
     if(!$('.view-home'))route('今晚');

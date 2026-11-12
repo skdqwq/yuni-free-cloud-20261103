@@ -1,5 +1,24 @@
 # 屿YUNI 日程管理应用
 
+## 晨间暖色、夜间深色与腾讯云转发准备（2026年11月12日）
+
+`app-themes.css` 恢复晨间暖色、其他功能深色，背景使用已压缩的房间照片。日程优先的功能层次保持不变。NiNi 桌宠恢复显示，可拖动、键盘移动和打开互动。官网 NiNi 在可见区域自动准备并播放打招呼，提供暂停与重播；后台或离开视口暂停，减少动态效果或省流模式下需主动播放。待机只移动、旋转整个模型，不缩放身体和翅膀。
+
+腾讯云部署脚本为 `tools/deploy-tencent.py --commit <完整提交号>`。脚本复用服务器已有数据库和 AI 环境配置，创建独立候选容器，验证资产与健康后切换 Caddy，保留旧容器及配置备份。请先完成腾讯云发布及外部验证，再启用 Render 转发模式。
+
+Render 转发模式使用以下环境变量（启用前确保上游已部署完成）：
+
+```text
+YUNI_RUNTIME_MODE=edge-proxy
+YUNI_PROXY_APP_ORIGIN=https://yuni.pars-study.cn
+YUNI_PROXY_SITE_ORIGIN=https://yuni.pars-study.cn
+YUNI_PROXY_SITE_PATH=/showcase
+```
+
+Render 原网址根路径进入应用，`/showcase/` 进入官网。HTTPS 上游固定，不接受客户端指定目标；会话 Cookie、Origin、流式响应和 WebSocket 均转发。内部状态与本机模型管理接口仍不开放。默认不设置 `edge-proxy` 时继续运行完整应用，代码发布本身不会切换到代理。转发入口仍受 Render 实例额度与休眠规则影响。
+
+验收：`node tools/check-render-edge.cjs`；`node tools/check-voice-mode.cjs`；`node tools/check-schedule-home.cjs`（最后一项只针对本地隔离预览）。
+
 ## 官网预览版 2026年11月12日
 
 `web/showcase/index.html` 为优化后的独立官网：日程优先的产品介绍、台灯与 NiNi 首屏、真实规则试排演示、可选陪伴介绍和按需加载的 NiNi 3D 动画。预览地址为 https://yuni-free-cloud-20261103.onrender.com/showcase/index.html 。官网不会读取用户数据或调用 AI，正式应用入口保留在根路径。官网与应用同属现有 Render 服务，未建立反向代理，也未切换腾讯云。

@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#f6f4ed">
   <meta name="description" content="屿 YUNI，按你的空闲时间安排日程。把想做的事拆成小步，也为休息留一点空间。">
-  <meta name="yuni-showcase-release" content="showcase-20261112-1">
+  <meta name="yuni-showcase-release" content="showcase-20261112-2">
   <title>屿 YUNI · 给日程一个安排，给自己一点空间</title>
   <link rel="icon" href="assets/yuni-icon-64.png" sizes="64x64">
   <link rel="apple-touch-icon" href="assets/yuni-icon-180.png">
-  <link rel="stylesheet" href="style.css?v=showcase-20261112-1">
+  <link rel="stylesheet" href="style.css?v=showcase-20261112-2">
   <script src="planner-core.js" defer></script>
-  <script src="site.js?v=showcase-20261112-1" defer></script>
+  <script src="site.js?v=showcase-20261112-2" defer></script>
   <script type="importmap">{"imports":{"three":"./vendor/three/three.module.js"}}</script>
 </head>
 <body>
@@ -30,7 +30,7 @@
         <div class="hero-actions"><a class="button primary app-link" href="https://yuni-free-cloud-20261103.onrender.com/">开始安排我的日程 <span aria-hidden="true">↗</span></a><a class="text-link" href="#arrange">先试排一件事 <span aria-hidden="true">↓</span></a></div>
         <p class="hero-footnote">从一件小事开始，不需要先聊一大段。</p>
       </div>
-      <div class="desk-scene" role="img" aria-label="暖色台灯下的日程纸，NiNi 陪在一旁。示例任务分成两段，中间留出休息。">
+      <div class="desk-scene" role="group" aria-label="暖色台灯下的日程纸，NiNi 陪在一旁。示例任务分成两段，中间留出休息。">
         <div class="scene-glow"></div>
         <div class="desk-lamp" aria-hidden="true"><i class="lamp-shade"></i><i class="lamp-stem"></i><i class="lamp-base"></i></div>
         <div class="day-sheet" aria-hidden="true">
@@ -43,8 +43,9 @@
           <div class="paper-bottom"><span>剩下的时间，留给自己。</span><span>01 / 01</span></div>
         </div>
         <div class="desk-line"></div>
-        <img class="scene-nini" src="assets/nini.webp" alt="" width="775" height="840" fetchpriority="high" decoding="async">
-        <span class="scene-caption">不着急，一步一步来。</span>
+        <div class="scene-nini" id="nini-hero" role="img" aria-label="NiNi 向你打招呼，陪你按自己的节奏安排事情。"><img class="nini-fallback" src="assets/nini.webp" alt="" width="775" height="840" fetchpriority="high" decoding="async"><canvas class="nini-canvas" width="400" height="400" aria-hidden="true" hidden></canvas></div>
+        <div class="scene-controls"><button id="hero-nini-motion" type="button" aria-controls="nini-hero">播放打招呼 ↗</button><button type="button" data-nini-replay="nini-hero" hidden>再招手</button></div>
+        <span class="scene-caption" id="hero-nini-status">不着急，一步一步来。</span>
       </div>
     </section>
 
@@ -89,7 +90,7 @@
       <div class="nini-stage">
         <div class="stage-orbit" aria-hidden="true"></div><span class="stage-spark" aria-hidden="true">✦</span>
         <div id="nini-greeting" class="nini-figure" role="img" aria-label="虚拟伙伴 NiNi，蓝色身体、奶白肚子和橙色小脚。"><img class="nini-fallback" src="assets/nini-poster.webp" alt="" loading="lazy" width="627" height="627"><canvas class="nini-canvas" width="627" height="627" aria-hidden="true" hidden></canvas></div>
-        <button id="nini-motion" class="nini-motion" type="button" aria-controls="nini-greeting">和 NiNi 打个招呼 <span aria-hidden="true">↗</span></button><p id="nini-status" role="status">点一下，NiNi 就会动起来。</p>
+        <div class="nini-buttons"><button id="nini-motion" class="nini-motion" type="button" aria-controls="nini-greeting">播放打招呼 ↗</button><button class="nini-replay" type="button" data-nini-replay="nini-greeting" hidden>再招一次手</button></div><p id="nini-status" role="status">NiNi 会在这里，和你打个招呼。</p>
       </div>
       <div class="nini-copy"><p class="eyebrow">03 / 认识你的伙伴</p><h2 id="nini-title">NiNi 在这里。<br>陪着你，按自己的节奏。</h2><p>有一点好奇，偶尔俏皮。<br>陪你整理，不催你向前。</p><div class="nini-quote"><span>NiNi 的一张小纸条</span><p>「一件一件来。<br>没做完的，不代表没努力。」</p></div></div>
     </section>

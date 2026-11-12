@@ -7,8 +7,7 @@
   display:block;height:100dvh;overflow:hidden;background:#f6f4ee;color:#263d35;color-scheme:light;
 }
 body.schedule-app{background:#f6f4ee;color:#263d35}
-.schedule-ready .ambient,.schedule-ready .cursor-glow,.schedule-ready .top-fade,.schedule-ready .stage,
-.schedule-app .nini-desktop-pet{display:none!important}
+.schedule-ready .ambient,.schedule-ready .cursor-glow,.schedule-ready .top-fade,.schedule-ready .stage{display:none!important}
 .schedule-ready .nav {
   position:absolute;inset:0 0 auto;width:100%;height:76px;display:flex;align-items:center;
   padding:0 max(30px,calc((100vw - 1160px)/2));gap:40px;background:#f6f4eef5;

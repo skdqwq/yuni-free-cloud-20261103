@@ -1,0 +1,79 @@
+/* Morning keeps its warm palette; every other functional view returns to night. */
+body.schedule-app{background:#0b101b}
+body.schedule-app:has(.app[data-phase=dawn]){background:#f5eadb}
+.app.schedule-ready[data-phase=night]{
+ --ink:#ece9e3;--ink-2:#c1c6d1;--ink-3:#a5afc0;--ink-4:#98a4b8;
+ --bg:#0c1220;--glass:#1b2438e8;--glass-2:#253149;--glass-3:#2c3951;
+ --hairline:#344158;--hairline-2:#46536a;--amber:#e8bc83;--amber-hi:#f4d3a8;
+ --amber-tint:#e8bc831c;--text:#ece9e3;--muted:#a5afc0;
+ color:#ece9e3;color-scheme:dark;background-color:#0c1220;
+ background-image:linear-gradient(110deg,#0b111fec,#101727ed 55%,#0c1220f5),url('/room-night.webp');
+ background-size:cover;background-position:center top;background-repeat:no-repeat;
+}
+.app.schedule-ready[data-phase=night] .nav{background:#0e1524f5;border-color:#2c374b}
+.app.schedule-ready[data-phase=night] :is(.brand,.schedule-nav button.active){color:#f1d3ac}
+.app.schedule-ready[data-phase=night] .schedule-nav button.active::after{background:#e4b778}
+.app.schedule-ready[data-phase=night] :is(.schedule-nav button,.nav-user){color:#b6bfd0}
+.app.schedule-ready[data-phase=night] :is(.nav-quit,.schedule-account){color:#bdc6d5!important}
+.app.schedule-ready[data-phase=night] .schedule-account{border-color:#3c485f!important}
+.app.schedule-ready[data-phase=night] .schedule-user-menu>div{background:#1b2537;border-color:#3d4a62;color:#ece9e3}
+.app.schedule-ready[data-phase=night] .schedule-home{color:var(--ink)}
+.app.schedule-ready[data-phase=night] .schedule-home :is(.schedule-subtitle,.schedule-note-top,.schedule-sync,.schedule-expand,.habit-inner>p,.habit-quiet,.habit-window label,.habit-rhythm label,.habit-weekdays legend,.schedule-habits summary>b,.schedule-form-bottom>p,.agenda-summary,.agenda-bottom,.timeline-item>span,.timeline-item button,.schedule-plan-row p,.pause-links span,.pause-intro p){color:var(--ink-3)!important}
+.app.schedule-ready[data-phase=night] :is(.schedule-intro h1,.schedule-home h2,.task-title-label,.schedule-title-input,.duration-field input,.schedule-preview h3,.schedule-plan-row h3,.timeline-item>b,.pause-links button,.pause-intro){color:var(--ink)}
+.app.schedule-ready[data-phase=night] .schedule-intro h1>span::after{background:#d9ad5a35}
+.app.schedule-ready[data-phase=night] :is(.schedule-date,.schedule-date span,.schedule-subtitle,.schedule-note-top,.schedule-sync,.section-caption,.schedule-form-row>label,.duration-field>span,.schedule-habits summary,.schedule-habits summary>b,.schedule-habits summary>span:first-child,.schedule-expand,.schedule-form-bottom>p,.habit-inner>p,.habit-inner .habit-reminder,.habit-quiet,.habit-rhythm label,.habit-weekdays legend,.habit-window label,.habit-window>span,.schedule-home .agenda-heading h3,.agenda-heading>div,.agenda-heading button,.schedule-week button>span,.schedule-week button>b,.agenda-empty h3,.agenda-empty p,.empty-handwritten,.agenda-summary,.agenda-summary span,.schedule-timeline time,.schedule-timeline time span,.timeline-item>span,.timeline-item button,.agenda-bottom,.schedule-loading,.preview-kicker,.preview-index,.schedule-preview>p,.schedule-preview-blocks b,.schedule-preview-blocks div>span,.preview-rest,.schedule-preview>small,.schedule-plans .section-caption,.plan-filters button,.schedule-plan-row p,.schedule-plan-row p>span,.plan-row-actions,.plan-finished,.plans-empty,.plans-empty p,.plans-empty>span,.schedule-pause h2,.schedule-pause summary>span,.schedule-pause summary b,.pause-intro p,.pause-links span,.schedule-footer>span,.schedule-footer>p,.tier-number){color:var(--ink-3)}
+.app.schedule-ready[data-phase=night] :is(.schedule-main){background:#151e2def;border-color:#354257;box-shadow:0 15px 45px #00000016}
+.app.schedule-ready[data-phase=night] .schedule-agenda{background:#111a29e8}
+.app.schedule-ready[data-phase=night] :is(.schedule-section-head,.schedule-workspace>[data-form-area],.schedule-title-input,.duration-field,.schedule-home input[type=datetime-local],.schedule-habits,.schedule-week,.schedule-preview-blocks li,.schedule-plans .schedule-section-head,.schedule-plan-list,.schedule-plan-row,.schedule-pause,.pause-links button,.schedule-footer,.schedule-date span){border-color:#344158}
+.app.schedule-ready[data-phase=night] :is(.schedule-home input[type=datetime-local],.habit-window input,.habit-rhythm input){color:#eee7dc;color-scheme:dark;border-color:#435067}
+.app.schedule-ready[data-phase=night] :is(.habit-window input,.habit-rhythm input){background:#202b3e}
+.app.schedule-ready[data-phase=night] .schedule-home input::placeholder{color:#a8b2c4}
+.app.schedule-ready[data-phase=night] :is(.duration-presets button,.habit-weekdays label>span,.schedule-secondary){background:#202b3d;border-color:#3a4960;color:#c7cfdd}
+.app.schedule-ready[data-phase=night] :is(.duration-presets button[aria-pressed=true],.habit-weekdays input:checked+span,.schedule-week button[aria-pressed=true]){background:#e7bc8322;border-color:#c69b63;color:#f0d0a6}
+.app.schedule-ready[data-phase=night] :is(.duration-presets button:hover,.schedule-week button:hover){background:#2d3a50}
+.app.schedule-ready[data-phase=night] .schedule-week button[aria-pressed=true]>b{color:#f5d4a8}
+.app.schedule-ready[data-phase=night] .schedule-week button.is-today>span{color:#f1cfa2}
+.app.schedule-ready[data-phase=night] .schedule-week button>i.has-plans{background:#dfba88}
+.app.schedule-ready[data-phase=night] .schedule-primary{background:#e7bd88;border-color:#e7bd88;color:#172133;box-shadow:0 5px 14px #0002}
+.app.schedule-ready[data-phase=night] .schedule-primary:hover{background:#f0cea4;border-color:#f0cea4}
+.app.schedule-ready[data-phase=night] :is(.schedule-text-button,.schedule-status,.schedule-plan-status,.plan-filters button[aria-pressed=true],.plans-empty button){color:#e7c596}
+.app.schedule-ready[data-phase=night] .schedule-status.is-error{color:#ffbda4}
+.app.schedule-ready[data-phase=night] .timeline-item{background:#243149;border-color:#c7a675}
+.app.schedule-ready[data-phase=night] .timeline-marker::before{background:#46516a}
+.app.schedule-ready[data-phase=night] .timeline-marker::after{background:#e6c08b;border-color:#152032;box-shadow:0 0 0 1px #91744d}
+.app.schedule-ready[data-phase=night] .schedule-preview-blocks li>svg{color:#e8c590}
+.app.schedule-ready[data-phase=night] .schedule-preview .schedule-shortage{color:#ffcfac;background:#ba784e20}
+.app.schedule-ready[data-phase=night] :is(.plan-filters button>span,.plan-filters button[aria-pressed=true]>span){color:#ead0ab;background:#b995612a}
+.app.schedule-ready[data-phase=night] .task-check{border-color:#92a0b5;color:#f2d4a8}
+.app.schedule-ready[data-phase=night] :is(.task-check:hover,.schedule-plan-row.is-done .task-check){background:#e5ba7b33;border-color:#d2b486}
+.app.schedule-ready[data-phase=night] .empty-calendar{background:#26334b;border-color:#5b6b86;box-shadow:5px 5px 0 #243149}
+.app.schedule-ready[data-phase=night] .empty-calendar>b{background:#465c45;color:#e4f0d7;border-color:#111a29}
+.app.schedule-ready[data-phase=night] .empty-calendar>span{background:#52647f}
+.app.schedule-ready[data-phase=night] .empty-calendar>i{background:#829270}
+body .app.schedule-ready[data-phase=night] .view-chat :is(.composer,.turn.from-nini .bubble){background:#1c273b!important;color:#efe9df!important;border-color:#3b4961!important}
+body .app.schedule-ready[data-phase=night] .view-chat .turn.from-me .bubble{background:#3a4050!important;color:#f4ddbe!important;border-color:#635c52!important}
+.app.schedule-ready[data-phase=night] :is(.nini-voice-settings,.nini-voice-controls select){background:#1c273b;color:#ece9e3;border-color:#3b4961}
+.app.schedule-ready[data-phase=night] .desk-light{background:radial-gradient(ellipse,#f6c9784d,transparent 68%)}
+.app.schedule-ready[data-phase=night] .desk-line{background:linear-gradient(90deg,transparent,#aa8b55 30%,#525d73 85%,transparent)}
+.app.schedule-ready[data-phase=dawn]{
+ --ink:#3f332b;--ink-2:#65564a;--ink-3:#7a6858;--ink-4:#8b7564;
+ --bg:#f5eadb;--glass:#fff9f0db;--glass-2:#fff6e8;--hairline:#d7c4ad;--amber:#c4915d;
+ --text:#3f332b;--muted:#7a6858;color:#3f332b;color-scheme:light;
+ background:radial-gradient(ellipse at 15% 5%,#f9ddb2aa,transparent 48%),linear-gradient(120deg,#f6ead8,#f9f2e8 65%,#f0e1d0);
+}
+.app.schedule-ready[data-phase=dawn] .nav{background:#f8ecddf5;border-color:#deccb5}
+.app.schedule-ready[data-phase=dawn] :is(.brand,.schedule-nav button.active){color:#7b5337}
+.app.schedule-ready[data-phase=dawn] :is(.schedule-nav button,.nav-user){color:#796757}
+.app.schedule-ready[data-phase=dawn] :is(.nav-quit,.schedule-account){color:#796757!important}
+.app.schedule-ready[data-phase=dawn] .schedule-nav button.active::after{background:#ba8955}
+.app.schedule-ready[data-phase=dawn] .schedule-user-menu>div{background:#fff8ed;border-color:#d3baa1;color:#4f3b2d}
+.app.schedule-ready[data-phase=dawn] .view-morning :is(textarea,input[type=text]){background:#fffaf2;color:#493b30;border-color:#cdb59d}
+.app.schedule-ready[data-phase=dawn] .view-morning :is(textarea,input)::placeholder{color:#8a7461;opacity:1}
+.app.schedule-ready[data-phase=dawn] :is(.nini-voice-settings,.nini-voice-controls select){background:#fff8edf0;color:#5f4938;border-color:#d6bea4}
+.app.schedule-ready[data-phase=dawn] .nini-voice-controls p{color:#79624f}
+.app.schedule-ready[data-phase=dawn] .nini-voice-controls button{border-color:#d3b99d;background:#f3e3cf;color:#644a35}
+.nini-desktop-pet{display:block;contain:layout style;filter:drop-shadow(0 6px 8px #0002)}
+.nini-desktop-pet .nini-pet-bubble{color:#f6e8d1;background:#243149f5;border-color:#52607a}
+body:has(.app[data-phase=dawn]) .nini-desktop-pet .nini-pet-bubble{color:#61472f;background:#fff6e9f5;border-color:#d4b58f}
+body:has(.night-overlay,.custom-pet-overlay,.nini-playground,.companion-overlay,.planner-overlay) .nini-desktop-pet{visibility:hidden}
+@media(max-width:640px){.nini-desktop-pet{width:82px;height:100px}.nini-pet-figure{height:100px}.nini-pet-bubble{display:none}}
