@@ -1,7 +1,7 @@
 {
-  "release": "night-20261112-3",
+  "release": "colors-20261113-1",
   "name": "屿YUNI 日程优先版",
-  "date": "2026-11-12",
+  "date": "2026-11-13",
   "features": [
     "直接安排日程",
     "空闲时段和专注节奏",
@@ -12,10 +12,12 @@
     "云端声音设置修复",
     "晨间暖色与夜间深色",
     "NiNi桌宠恢复",
-    "官网自动打招呼"
+    "官网自动打招呼",
+    "晨间浅色与其他功能深色分离",
+    "睡前小岛纸条和设置深色修复"
   ],
   "sha256": {
-    "/index.html": "4474da522e2361cf711a673aff16f3c38c440c3105dd1d9d66ce05ff2fe474d7",
+    "/index.html": "5ec1aba02ab859f268609d86061f78ecbf555b152a546043804e24735f9eb1d8",
     "/schedule-home.js": "99723881f19f82b16b8dcad36c3ddbc5c8a8e4bd3b60e840e01e9b591a488b27",
     "/schedule-home.css": "7cd7b005fcf837e36e517ed9f02cf04841b7daabf075c8e5fbe336405504c55e",
     "/performance-ui.css": "440f7ba7612adfb7319da74c4cdbcc2726ce1b8cff038b29766d7eb4c35aa7eb",
@@ -30,7 +32,7 @@
     "/nini-card.webp": "96f5c340520b31fc6d182d72511b04fbac0ba77c06d142f2c75ba928afd68bd8",
     "/voice-core.js": "2a74e0459bbf63b2e82a227dbad5c1f1b6cee507c4a765de5a9bad4b52935fd0",
     "/nini-voice.js": "9837656653316f1909407c930618193ce170433a5e6148ea0303f189743e09e4",
-    "/app-themes.css": "322174f8940fb279634eb99a0f3255f1a84d8398db8b89eff0e765fa7eced5fa",
+    "/app-themes.css": "38f3737027d02e8cfe9070671db5d36dfe0342cd0fab89d15131b250af9a8d3a",
     "/nini-pet.js": "1effef5a03e30440005f680cb9b2f68114c73df5b3c4aabc3bf21dfe38e9535b",
     "/room-night.webp": "6a5cef7f0de835c47b23cd72106af0614ebc41338da4222a7f91a4c96655fa31"
   }

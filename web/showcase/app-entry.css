@@ -1,0 +1,15 @@
+/* The original showcase palette stays in style.css. These additions only place app links. */
+.page-app-entry{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:22px;border-top:1px solid currentColor;color:inherit;font-size:12px}
+.page-app-entry>span{opacity:.72;line-height:1.7}
+.page-app-entry .text-link{display:inline-flex;align-items:center;gap:12px;white-space:nowrap;min-height:44px;font-size:13px}
+.hero>.page-app-entry,.narrative-frame>.page-app-entry{position:relative;z-index:2}
+.hero>.page-app-entry{margin-top:0;margin-bottom:66px}
+.narrative-frame>.page-app-entry{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);border-top-color:#ffffff35}
+.narrative-frame .narrative-inner{padding-bottom:130px}
+.story-choice>.page-app-entry{margin-top:25px}
+.experience>.page-app-entry,.personality>.page-app-entry,.about>.page-app-entry{margin-bottom:20px}
+.nini-animation-status{font-size:12px;color:inherit;opacity:.75;margin-top:10px}
+.hero-character .nini-animation-status{grid-column:1 / -1;text-align:right}
+.hero-character [data-nini-replay]{grid-column:2;justify-self:end}
+.hero-character [hidden]{display:none!important}
+@media(max-width:680px){.page-app-entry{gap:10px;align-items:flex-start;flex-direction:column;padding-block:16px}.page-app-entry>span{font-size:11px}.page-app-entry .text-link{font-size:13px;min-height:44px}.narrative-frame>.page-app-entry{bottom:8px}.narrative-frame .narrative-inner{padding-bottom:150px}.hero>.page-app-entry{margin-top:0}.footer-inner{flex-wrap:wrap}.footer-inner>.app-link{margin-left:auto}}

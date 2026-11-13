@@ -1,4 +1,6 @@
 /* Morning keeps its warm palette; every other functional view returns to night. */
+html{color-scheme:dark}
+html:has(.app .view-morning){color-scheme:light}
 body.schedule-app{background:#0b101b}
 body.schedule-app:has(.app[data-phase=dawn]){background:#f5eadb}
 .app.schedule-ready[data-phase=night]{
@@ -72,6 +74,41 @@ body .app.schedule-ready[data-phase=night] .view-chat .turn.from-me .bubble{back
 .app.schedule-ready[data-phase=dawn] :is(.nini-voice-settings,.nini-voice-controls select){background:#fff8edf0;color:#5f4938;border-color:#d6bea4}
 .app.schedule-ready[data-phase=dawn] .nini-voice-controls p{color:#79624f}
 .app.schedule-ready[data-phase=dawn] .nini-voice-controls button{border-color:#d3b99d;background:#f3e3cf;color:#644a35}
+/* Auxiliary screens live outside .app, so they need their own dark surfaces. */
+body.schedule-app{--text:#ece9e3;--muted:#a5afc0}
+body.schedule-app:has(.view-morning){--text:#3f332b;--muted:#7a6858}
+body.schedule-app .night-overlay{color:#ece9e3;background:#050914cc}
+body.schedule-app .night-dialog{color:#ece9e3;color-scheme:dark;border-color:#39475d;background:radial-gradient(ellipse at 92% 0%,#e3b87616,transparent 42%),#151e2d}
+body.schedule-app .night-dialog :is(h2,h3){color:#f1ebe2}
+body.schedule-app .night-dialog :is(header,.night-lead,.night-note,.night-grid span,.night-cards article div){color:#b9c0ce}
+body.schedule-app .night-dialog :is(label,legend){color:#d0d5df}
+body.schedule-app .night-dialog header i{background:#d7ad7a}
+body.schedule-app .night-dialog :is(header button,.night-actions button:not(.primary),.night-cards button,.night-check){color:#e4dfd7;border-color:#46546b;background:#243047}
+body.schedule-app .night-dialog :is(.night-grid,fieldset){border-color:#3b485e}
+body.schedule-app .night-dialog .night-grid{background:#3b485e}
+body.schedule-app .night-dialog .night-grid button{color:#eee9e1;background:#202b3e}
+body.schedule-app .night-dialog .night-grid button:hover{background:#2c3950}
+body.schedule-app .night-dialog :is(.night-grid em,.night-back,.night-status){color:#efc995}
+body.schedule-app .night-dialog .primary{color:#172133;background:#e7bd88;border-color:#e7bd88}
+body.schedule-app .night-dialog :is(button,textarea,input):focus-visible{outline-color:#ecc58e}
+body.schedule-app .night-dialog textarea{color:#eee9e1;border-color:#4a5870;background:repeating-linear-gradient(to bottom,#1c283c 0,#1c283c 32px,#35425a 33px,#1c283c 34px);box-shadow:none}
+body.schedule-app .night-dialog textarea::placeholder{color:#aab4c6;opacity:1}
+body.schedule-app .night-dialog input{accent-color:#e7bd88}
+body.schedule-app .night-dialog .night-cards article{color:#e6e3df;border-color:#3b4a61;background:#202c40}
+body.schedule-app .night-dialog .night-bubble{color:#eee8df;background:#29374c}
+body.schedule-app .night-dialog .night-bubble.mine{color:#f4ddbd;background:#414351}
+body.schedule-app .night-dialog .island-start{color:#f0e1c9;border-color:#4d5462;background:#2d3547}
+body.schedule-app .night-dialog .island-start span{color:#c2c5cd}
+body.schedule-app .night-dialog .island-paper{color:#eee5d9;background:#27344a;box-shadow:0 8px 18px #0003}
+body.schedule-app .night-dialog .island-paper span{color:#d9bd95}
+body.schedule-app .night-dialog .island-scene :is(label,.night-note){color:#f1ded0}
+body.schedule-app .night-dialog .island-scene .night-actions button:not(.primary){color:#fff7eb;background:#ffffff12;border-color:#e5d2b777}
+.app.schedule-ready[data-phase=night] :is(.view-archive,.view-card){color:#ece9e3}
+.app.schedule-ready[data-phase=night] :is(.view-archive input,.view-archive select,.view-archive textarea){color:#eee9e1;background:#202b3e;border-color:#46546b;color-scheme:dark}
+.app.schedule-ready[data-phase=night] :is(.view-archive .arch-toggle,.view-archive .log-list,.view-archive .log-item,.view-card .option){color:#e7e3dd;background:#1b2639;border-color:#3d4a60}
+.app.schedule-ready[data-phase=night] :is(.view-card .option.on,.view-archive .arch-toggle.on){border-color:#dbb784;background:#2d3546}
+.app.schedule-ready[data-phase=dawn] .view-morning :is(.lede,.footnote,.layer-bar,.m-tools,.m-tools-left){color:#796452}
+.app.schedule-ready[data-phase=dawn] .view-morning :is(.bubble,.m-form,.morning-letter){border-color:#d7c2aa;color:#493b30}
 .nini-desktop-pet{display:block;contain:layout style;filter:drop-shadow(0 6px 8px #0002)}
 .nini-desktop-pet .nini-pet-bubble{color:#f6e8d1;background:#243149f5;border-color:#52607a}
 body:has(.app[data-phase=dawn]) .nini-desktop-pet .nini-pet-bubble{color:#61472f;background:#fff6e9f5;border-color:#d4b58f}

@@ -1,27 +1,5 @@
 (() => {
   'use strict';
-  const form=document.getElementById('demo-form'),result=document.getElementById('demo-result');
-  function preview(){
-    const data=new FormData(form),title=String(data.get('task')).trim(),duration=Number(data.get('duration'));
-    if(!title){result.textContent='先写下一件想做的事。';return;}
-    const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);tomorrow.setHours(0,0,0,0);
-    const deadline=new Date(tomorrow);deadline.setHours(20,0,0,0);
-    const habits={windows:[{start:'18:00',end:'20:00'}],weekdays:[0,1,2,3,4,5,6],focus:25,rest:5,lead:0,quietOutside:true};
-    const time=value=>new Date(value).toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
-    try{
-      const plan=window.NiniPlanner.plan(habits,{title,duration,deadline:deadline.toISOString()},[],tomorrow.getTime());
-      result.replaceChildren();
-      const heading=document.createElement('h4');heading.textContent='「'+title+'」可以这样开始';result.append(heading);
-      const list=document.createElement('ol');
-      plan.blocks.forEach((block,index)=>{const row=document.createElement('li'),number=document.createElement('span'),slot=document.createElement('b'),minutes=document.createElement('small');number.textContent=String(index+1).padStart(2,'0');slot.textContent=time(block.start)+'–'+time(block.end);minutes.textContent=Math.round((Date.parse(block.end)-Date.parse(block.start))/60000)+' 分钟专注';row.append(number,slot,minutes);list.append(row);});
-      result.append(list);
-      if(plan.missing){const notice=document.createElement('p');notice.className='shortage';notice.textContent='还差 '+plan.missing+' 分钟没有排下。可以在应用里增加空闲时段，或调整任务时长。';result.append(notice);}
-    }catch(error){result.textContent=error.message||'请检查任务和时长。';}
-  }
-  form.addEventListener('submit',event=>{event.preventDefault();preview();});preview();
-  const descriptions={quiet:'去睡前小岛，什么都不说也可以。不用解释，也没有一定要完成的流程。',note:'把还挂念的事写成一张小纸条。由你选择保存，想看的时候再打开。',chat:'想多说一点的时候，再和 NiNi 聊聊。对话是可选的陪伴，也可以随时停下来。'};
-  document.querySelectorAll('[data-space]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-space]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));document.getElementById('space-detail').textContent=descriptions[button.dataset.space];}));
-
   // Show the illustration immediately, then greet once when each figure enters view.
   // Only visible figures animate; no loop deforms the model or its wings.
   function animateFigure(figureId,buttonId,statusId){
@@ -39,7 +17,7 @@
     }
     async function load(){
       if(loaded||loading)return;attempted=true;loading=true;sync();
-      try{const module=await import('./nini-player.js?v=showcase-20261112-2');player=await module.startGreeting({figureId,idleMotion:true});loaded=true;if(status)status.textContent='你好呀。慢慢来，我陪你。';}
+      try{const module=await import('./nini-player.js?v=showcase-20261113-restore');player=await module.startGreeting({figureId,idleMotion:true});loaded=true;if(status)status.textContent='你好呀。慢慢来，我陪你。';}
       catch{if(status)status.textContent='NiNi 在这里，陪你慢慢来。';}
       finally{loading=false;sync();}
     }
@@ -52,6 +30,221 @@
     if('IntersectionObserver'in window)new IntersectionObserver(([entry])=>observe(entry.isIntersecting),{threshold:.15}).observe(figure);else observe(true);
     sync();
   }
-  animateFigure('nini-hero','hero-nini-motion','hero-nini-status');
   animateFigure('nini-greeting','nini-motion','nini-status');
+})();
+
+(() => {
+  const scene = document.querySelector(".portrait-scene");
+  const card = scene.querySelector(".portrait");
+  let yaw = 0, pitch = 0, startX = 0, startY = 0, startYaw = 0, startPitch = 0, activePointer = null;
+  function show() {
+    card.style.setProperty("--portrait-y", `${yaw}deg`);
+    card.style.setProperty("--portrait-x", `${pitch}deg`);
+  }
+  scene.addEventListener("pointerdown", event => {
+    if (event.button !== 0 || activePointer !== null) return;
+    activePointer = event.pointerId; startX = event.clientX; startY = event.clientY;
+    startYaw = yaw; startPitch = pitch;
+    scene.setPointerCapture(activePointer); scene.classList.add("is-dragging");
+  });
+  scene.addEventListener("pointermove", event => {
+    if (event.pointerId !== activePointer) return;
+    yaw = startYaw + (event.clientX - startX) * .8;
+    pitch = startPitch - (event.clientY - startY) * .8;
+    show();
+  });
+  function release(event) {
+    if (event.pointerId !== activePointer) return;
+    activePointer = null; scene.classList.remove("is-dragging");
+  }
+  scene.addEventListener("pointerup", release);
+  scene.addEventListener("pointercancel", release);
+  scene.addEventListener("lostpointercapture", release);
+  function reset() { yaw = 0; pitch = 0; show(); }
+  scene.addEventListener("dblclick", reset);
+  scene.addEventListener("keydown", event => {
+    if (event.key === "Home") { event.preventDefault(); reset(); return; }
+    const delta = { ArrowLeft: [-25, 0], ArrowRight: [25, 0], ArrowUp: [0, 25], ArrowDown: [0, -25] }[event.key];
+    if (!delta) return;
+    event.preventDefault(); yaw += delta[0]; pitch += delta[1]; show();
+  });
+})();
+
+(() => {
+  if (!("IntersectionObserver" in window) || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.documentElement.classList.add("reveal-ready");
+  const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (entry.isIntersecting) { entry.target.classList.add("is-visible"); observer.unobserve(entry.target); }
+  }), { threshold: .12 });
+  document.querySelectorAll("[data-reveal]").forEach(item => observer.observe(item));
+})();
+
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  document.querySelectorAll("#stories .narrative-frame").forEach(frame => {
+    const slides = [...frame.querySelectorAll(".narrative-slide")];
+    if (slides.length < 2) return;
+    const breath = frame.querySelector(".narrative-breath");
+    let current = 0, visible = !("IntersectionObserver" in window), timer, breathing;
+    function show(index) {
+      current = (index + slides.length) % slides.length;
+      slides.forEach((slide, i) => slide.classList.toggle("is-current", i === current));
+    }
+    function schedule() {
+      clearTimeout(timer);
+      if (breathing) { breathing.cancel(); breathing = null; }
+      if (!visible || reduce.matches || document.hidden) return;
+      const advance = () => { show(current+1); schedule(); };
+      if (typeof breath.animate !== "function") {
+        timer = setTimeout(advance, 5000);
+        return;
+      }
+      breathing = breath.animate([
+        { transform: "scale(.75)", opacity: .45, boxShadow: "0 0 5px #f3d1a455", offset: 0 },
+        { transform: "scale(1.45)", opacity: 1, boxShadow: "0 0 20px 7px #f3d1a477", offset: .5 },
+        { transform: "scale(.75)", opacity: .45, boxShadow: "0 0 5px #f3d1a455", offset: 1 }
+      ], { duration: 5000, easing: "ease-in-out", fill: "forwards" });
+      breathing.finished.then(advance).catch(() => {});
+    }
+    reduce.addEventListener("change", schedule);
+    document.addEventListener("visibilitychange", schedule);
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(entries => { visible = entries[0].isIntersecting; schedule(); }, { threshold: .1 }).observe(frame);
+    }
+    schedule();
+  });
+})();
+
+(() => {
+  const root = document.getElementById("stories");
+  const buttons = [...root.querySelectorAll("[data-story]")];
+  const moment = root.querySelector(".story-moment");
+  const data = {
+    new: { time: "初到这里", title: "已经很努力地融入了，\n还是有点想家。", detail: "新的节奏、新的关系，需要一点时间熟悉。今晚，不用急着变得游刃有余。", response: "慢一点也没关系，我陪你适应。" },
+    busy: { time: "放不下明天", title: "明天的事情还没来，\n心已经先忙起来了。", detail: "任务、消息和期待一起涌上来。先把今晚还在脑海里的事，轻轻放一放。", response: "不用今晚解决所有事，我们先缓一缓。" },
+    alone: { time: "房间安静下来", title: "有些话说不清楚，\n也不想打扰谁。", detail: "不是每一种情绪都需要立刻找到答案。你可以不解释，只是给自己留一点空间。", response: "不想说也可以，我在这里。" }
+  };
+  function choose(name) {
+    const item = data[name];
+    buttons.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.story === name)));
+    moment.querySelector(".story-time").textContent = item.time;
+    moment.querySelector("h3").textContent = item.title;
+    moment.querySelector(".story-description").textContent = item.detail;
+    moment.querySelector(".story-response strong").textContent = item.response;
+  }
+  buttons.forEach(button => button.addEventListener("click", () => choose(button.dataset.story)));
+  root.querySelector(".story-next").addEventListener("click", () => {
+    const target = document.querySelector('#experience [data-select="listen"]');
+    target.click();
+    document.getElementById("experience").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+  });
+})();
+
+(() => {
+  const root = document.getElementById("experience");
+  const stage = root.querySelector(".scene-stage");
+  const choices = [...root.querySelectorAll("[data-select]")];
+  const casts = [...root.querySelectorAll("[data-person]")];
+  const photos = [...root.querySelectorAll("[data-photo]")];
+  const action = root.querySelector(".scene-action");
+  const reply = root.querySelector(".scene-reply");
+  const breatheLabel = root.querySelector(".scene-breathe-label");
+  const goodnightLabel = root.querySelector(".scene-goodnight-label");
+  const index = root.querySelector(".scene-index");
+  const heading = root.querySelector(".scene-copy h3");
+  const detail = root.querySelector(".scene-detail");
+  const copy = {
+    listen: ["01 / 03", "有话就说一句。", "白天还在心里的事，可以轻轻说出来。", "播放对话"],
+    breathe: ["02 / 03", "安静一会儿。", "跳过输入，按自己的节奏慢慢呼吸。", "开始放松"],
+    finish: ["03 / 03", "今晚，就到这里。", "想停的时候，随时可以放下手机。", "结束今晚"]
+  };
+  let selected = "listen";
+  let person = "woman";
+  let replyTimer;
+  function showPhoto() {
+    for (const photo of photos) {
+      const visible = photo.dataset.photo === person + "-" + selected;
+      photo.classList.toggle("scene-visible", visible);
+      photo.setAttribute("aria-hidden", String(!visible));
+    }
+  }
+  function select(scene) {
+    if (scene === selected) return;
+    selected = scene;
+    clearTimeout(replyTimer);
+    reply.hidden = false;
+    reply.classList.remove("scene-enter");
+    stage.classList.remove("scene-playing", "scene-finished");
+    choices.forEach(button => button.setAttribute("aria-pressed", String(button.dataset.select === scene)));
+    showPhoto();
+    root.querySelectorAll("[data-view]").forEach(view => { view.hidden = view.dataset.view !== scene; });
+    [index.textContent, heading.textContent, detail.textContent, action.textContent] = copy[scene];
+    breatheLabel.textContent = "跟着自己的节奏";
+    goodnightLabel.textContent = "什么时候结束，由你决定。";
+    action.removeAttribute("aria-disabled");
+  }
+  for (const button of choices) {
+    const activate = () => select(button.dataset.select);
+    button.addEventListener("pointerenter", event => {
+      if (event.pointerType === "mouse") activate();
+    });
+    button.addEventListener("focus", () => {
+      if (button.matches(":focus-visible")) activate();
+    });
+    button.addEventListener("click", activate);
+  }
+  for (const button of casts) {
+    button.addEventListener("click", () => {
+      person = button.dataset.person;
+      for (const cast of casts) {
+        cast.setAttribute("aria-pressed", String(cast === button));
+      }
+      showPhoto();
+    });
+  }
+  action.addEventListener("click", () => {
+    if (action.getAttribute("aria-disabled") === "true") return;
+    if (selected === "listen") {
+      clearTimeout(replyTimer);
+      reply.classList.remove("scene-enter");
+      reply.hidden = true;
+      stage.classList.add("scene-playing");
+      replyTimer = setTimeout(() => {
+        reply.hidden = false;
+        reply.classList.add("scene-enter");
+        stage.classList.remove("scene-playing");
+        action.textContent = "再看一次";
+      }, 950);
+    } else if (selected === "breathe") {
+      const playing = stage.classList.toggle("scene-playing");
+      breatheLabel.textContent = playing ? "慢慢呼吸" : "已暂停";
+      action.textContent = playing ? "暂停放松" : "继续放松";
+    } else {
+      stage.classList.add("scene-finished");
+      goodnightLabel.textContent = "好，今晚就到这里。晚安。";
+      action.textContent = "已结束";
+      action.setAttribute("aria-disabled", "true");
+    }
+  });
+})();
+
+const styles = [...document.querySelectorAll("[data-style]")];
+const reply = document.querySelector("#style-reply");
+const replies = {
+  listen: "「那句话到了晚上还在心里。你可以只说到这里。」",
+  warm: "「明明已经回到家了，心里却还卡在那一刻。今晚可以先歇一歇。」",
+  direct: "「那句话还让你在意。今晚可以先说到这里。」"
+};
+
+styles.forEach((button) => {
+  button.addEventListener("click", () => {
+    styles.forEach((style) => style.setAttribute("aria-pressed", String(style === button)));
+    reply.textContent = replies[button.dataset.style];
+  });
+});
+
+// Keep each entry on the working application address, independent of the showcase host.
+(() => {
+ const address='https://yuni-free-cloud-20261103.onrender.com/';
+ document.querySelectorAll('a[href="'+address+'"]').forEach(link=>link.classList.add('app-link'));
 })();
