@@ -1,7 +1,9 @@
 'use strict';
 const http=require('node:http'),https=require('node:https');
+const fs=require('node:fs'),path=require('node:path');
 const {route,originAllowed}=require('../proxy.cjs');
 const hopByHop=new Set(['connection','keep-alive','proxy-authenticate','proxy-authorization','te','trailer','transfer-encoding','upgrade','proxy-connection']);
+const wechatVerificationPath='/2594ff6de56a7d6c1fb434cdc53ecb64.txt';
 
 function upstreamOrigin(value,allowLocalTestOrigins=false){
  const url=new URL(value);
@@ -12,6 +14,7 @@ function upstreamOrigin(value,allowLocalTestOrigins=false){
 function createEdgeProxy({appOrigin,siteOrigin,sitePrefix='',allowLocalTestOrigins=false}={}){
  if(!['','/showcase'].includes(sitePrefix))throw Error('Unsupported showcase upstream path');
  const origins={app:upstreamOrigin(appOrigin,allowLocalTestOrigins),site:upstreamOrigin(siteOrigin,allowLocalTestOrigins)};
+ const wechatVerification=fs.readFileSync(path.join(__dirname,'../web',wechatVerificationPath.slice(1)));
  const agents={https:new https.Agent({keepAlive:true,maxSockets:32}),http:new http.Agent({keepAlive:true,maxSockets:16})};
  function target(req){
   if(!req.url?.startsWith('/')||req.url.startsWith('//'))throw Error('Invalid request target');
@@ -50,6 +53,12 @@ function createEdgeProxy({appOrigin,siteOrigin,sitePrefix='',allowLocalTestOrigi
   if(!originAllowed(req.headers.origin,req.headers.host)){res.writeHead(403);return res.end();}
   let selected;try{selected=target(req);}catch{res.writeHead(400);return res.end();}
   if(selected.disabled){res.writeHead(503,{'Content-Type':'application/json; charset=utf-8'});return res.end(JSON.stringify({error:'此接口不对外开放'}));}
+  // Serve this public ownership challenge on the Render hostname itself.
+  if(new URL(req.url,'https://edge.invalid').pathname===wechatVerificationPath){
+   if(!['GET','HEAD'].includes(req.method)){res.writeHead(405,{Allow:'GET, HEAD'});return res.end();}
+   res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','Content-Length':wechatVerification.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Yuni-Route':'verification'});
+   return res.end(req.method==='HEAD'?undefined:wechatVerification);
+  }
   if(req.url==='/showcase'){res.writeHead(308,{Location:'/showcase/'});return res.end();}
   const {origin,path,kind}=selected,transport=origin.protocol==='https:'?https:http;
   const upstream=transport.request({protocol:origin.protocol,hostname:origin.hostname,port:origin.port||undefined,path,method:req.method,headers:headers(req,origin),agent:agents[origin.protocol==='https:'?'https':'http']},reply=>{
