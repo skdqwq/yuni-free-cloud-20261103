@@ -56,7 +56,7 @@ function createEdgeProxy({appOrigin,siteOrigin,sitePrefix='',allowLocalTestOrigi
   // Serve this public ownership challenge on the Render hostname itself.
   if(new URL(req.url,'https://edge.invalid').pathname===wechatVerificationPath){
    if(!['GET','HEAD'].includes(req.method)){res.writeHead(405,{Allow:'GET, HEAD'});return res.end();}
-   res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','Content-Length':wechatVerification.length,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Yuni-Route':'verification'});
+   res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','Content-Length':wechatVerification.length,'Cache-Control':'no-store, no-transform','X-Content-Type-Options':'nosniff','X-Yuni-Route':'verification'});
    return res.end(req.method==='HEAD'?undefined:wechatVerification);
   }
   if(req.url==='/showcase'){res.writeHead(308,{Location:'/showcase/'});return res.end();}
